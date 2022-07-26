@@ -1,0 +1,8 @@
+.next/
+dist/
+*.yml
+storybook-static
+coverage
+docs/_static/
+benchsci/frontend/ern/src/typings/openAPI-schema.ts
+plop-templates/

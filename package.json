@@ -1,0 +1,26 @@
+{
+  "name": "auth0-member-automator",
+  "version": "0.1.0",
+  "description": "A Puppeteer-based browser automation service to automatically onboard and offboard tenant members",
+  "main": "index.js",
+  "scripts": {
+    "start": "node -r dotenv/config index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "auth0",
+    "puppeteer",
+    "chromium",
+    "automation",
+    "browser",
+    "tenant"
+  ],
+  "author": "Anish Khale",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^15.5.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1"
+  }
+}

@@ -1,0 +1,88 @@
+parser: '@typescript-eslint/parser'
+root: true
+env:
+  node: true
+plugins:
+- '@typescript-eslint'
+- 'jest'
+- 'testing-library'
+extends:
+- 'airbnb'
+- 'prettier'
+- 'next'
+- 'next/core-web-vitals'
+- 'eslint:recommended'
+- 'plugin:jest/recommended'
+- 'plugin:testing-library/react'
+- 'plugin:@typescript-eslint/eslint-recommended'
+- 'plugin:@typescript-eslint/recommended'
+- 'plugin:react/recommended'
+- 'plugin:react-hooks/recommended'
+- 'plugin:prettier/recommended'
+- 'plugin:import/errors'
+- 'plugin:import/warnings'
+- 'plugin:import/typescript'
+- 'plugin:jsx-a11y/recommended'
+- 'plugin:cypress/recommended'
+overrides:
+- files:
+  - '*.**.ts?(x)'
+  rules:
+    no-import-assign: 'off'
+    testing-library/render-result-naming-convention: 'off'
+    testing-library/no-node-access: 'off'
+    testing-library/no-container: 'off'
+    testing-library/prefer-user-event: 'error'
+    no-undef: "off"
+rules:
+  '@next/next/no-img-element': 'off'
+  '@typescript-eslint/no-var-requires': 'off'
+  '@typescript-eslint/explicit-module-boundary-types': 'off'
+  '@typescript-eslint/no-explicit-any': 'error'
+  '@typescript-eslint/array-type':
+  - 'error'
+  - options:
+    default: 'array'
+  curly: 'error'
+  global-require: 'off'
+  dot-notation: 'error'
+  import/first: 'error'
+  import/newline-after-import: 'error'
+  import/namespace: 'error'
+  import/named: 'off'
+  import/no-amd: 'error'
+  import/no-anonymous-default-export: 'error'
+  import/no-cycle: 'error'
+  import/no-deprecated: 'error'
+  import/no-dynamic-require: 'error'
+  import/no-extraneous-dependencies: [error, {devDependencies: true}]
+  import/no-mutable-exports: 'error'
+  import/no-self-import: 'error'
+  import/extensions: 'off'
+  import/no-unassigned-import:
+  - 'error'
+  - allow:
+    - '**/*.css'
+    - '@testing-library/jest-dom'
+  import/no-useless-path-segments: 'error'
+  import/no-unresolved: 'off'
+  jest/no-disabled-tests: 'error'
+  jsx-a11y/anchor-is-valid: 'off'
+  react/jsx-curly-brace-presence:
+  - 'error'
+  - 'never'
+  react/display-name: 'off'
+  react/jsx-props-no-spreading: 'off'
+  react/jsx-no-undef: 'off'
+  react/react-in-jsx-scope: 'off'
+  react/jsx-uses-react: 'off'
+  react/require-default-props: 'off'
+  react/jsx-filename-extension: [1, {"extensions": [".tsx", ".ts"]}]
+  react/jsx-wrap-multilines: ['error', {declaration: false, assignment: false}]
+  no-console: 'error'
+  camelcase: 'off'
+  react/prop-types: 'off'
+  no-shadow: 'off'
+  no-use-before-define: 'off'
+globals:
+  window: true

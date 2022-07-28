@@ -15,6 +15,15 @@ const launch = async () => {
     },
   )
 
+  // Extract tenants from window object
+  const extractTenants = async () => {
+    const user = await page.evaluate(() =>
+      JSON.stringify(window.manhattan.user),
+    )
+    console.log({ user })
+    return JSON.parse(user).tenants
+  }
+
   // Extract CSRF token from window object
   const extractCSRFToken = async () =>
     JSON.parse(
@@ -31,17 +40,22 @@ const launch = async () => {
   }
 
   // Switch tenants
-  //
+
+  // The 3 second timeout is deliberately added prior to extracting the
+  // tenants to allow the user object to be instantiated in the window object.
+  await page.waitForTimeout(3000)
+  const tenants = await extractTenants()
+
   // Note: We use a modern for loop instead of a forEach below as we intend to
   // use await. forEach creates individual instances of the function that are
   // executed independently of each other and, therefore, await cannot suspend
   // their operations to make them operate serially.
   // c.f. https://stackoverflow.com/a/37576787
-  for (const tenant of config.tenantOpts.tenants) {
-    console.log(`Switching to tenant ${tenant.name}`)
+  for (const tenant of tenants) {
+    console.log(`Switching to tenant ${tenant.id}`)
 
     await page.goto(
-      `${config.tenantOpts.baseUrl}${tenant.path}${config.tenantOpts.suffixPath}`,
+      `${config.tenantOpts.baseUrl}/${tenant.locality}/${tenant.id}${config.tenantOpts.suffixPath}`,
       { waitUntil: 'networkidle2' },
     )
 
@@ -52,7 +66,7 @@ const launch = async () => {
       },
       data: {
         owners: config.tenantOpts.owners,
-        // Available roles:
+        // Supported roles:
         // ['owners', 'editor-users', 'viewer-config', 'viewer-users']
         roles: config.tenantOpts.roles,
       },

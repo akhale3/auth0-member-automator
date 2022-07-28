@@ -16,13 +16,9 @@ const launch = async () => {
   )
 
   // Extract tenants from window object
-  const extractTenants = async () => {
-    const user = await page.evaluate(() =>
-      JSON.stringify(window.manhattan.user),
-    )
-    console.log({ user })
-    return JSON.parse(user).tenants
-  }
+  const extractTenants = async () =>
+    JSON.parse(await page.evaluate(() => JSON.stringify(window.manhattan.user)))
+      .tenants
 
   // Extract CSRF token from window object
   const extractCSRFToken = async () =>

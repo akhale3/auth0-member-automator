@@ -4,12 +4,22 @@ const puppeteer = require('puppeteer')
 const config = require(`${__dirname}/config`)
 
 const launch = async () => {
+  // Validate inputs
+  if (
+    !config.tenantOpts.owners.length &&
+    !config.tenantOpts.membersToRemove.length
+  ) {
+    console.log('Please specify at least one owner to add or member to remove')
+
+    return
+  }
+
   // Launch browser and wait for manual login
   const browser = await puppeteer.launch(config.puppeteerOpts)
   const page = await browser.newPage()
   await page.goto('https://auth0.com/api/auth/login?redirectTo=dashboard')
   await page.waitForFrame(
-    `${config.tenantOpts.baseUrl}${config.tenantOpts.landingPagePath}`,
+    async (frame) => frame.url().includes(config.tenantOpts.baseUrl),
     {
       timeout: 0,
     },
@@ -35,6 +45,33 @@ const launch = async () => {
     })
   }
 
+  const removeTenantMembers = async ({ headers, membersToRemove }) => {
+    const response = await fetch(
+      'https://manage.auth0.com/api/authz-tenant-members',
+      {
+        method: 'GET',
+        headers,
+      },
+    )
+
+    const members = await response.json()
+    const filteredMembers = members.filter((member) =>
+      membersToRemove.includes(member),
+    )
+
+    for (const member of filteredMembers) {
+      await fetch(
+        `https://manage.auth0.com/api/authorizations/${encodeURIComponent(
+          member.id,
+        )}`,
+        {
+          method: 'DELETE',
+          headers,
+        },
+      )
+    }
+  }
+
   // Switch tenants
 
   // The 3 second timeout is deliberately added prior to extracting the
@@ -55,18 +92,29 @@ const launch = async () => {
       { waitUntil: 'networkidle2' },
     )
 
-    await page.evaluate(addTenantMembers, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-csrftoken': await extractCSRFToken(),
-      },
-      data: {
-        owners: config.tenantOpts.owners,
-        // Supported roles:
-        // ['owners', 'editor-users', 'viewer-config', 'viewer-users']
-        roles: config.tenantOpts.roles,
-      },
-    })
+    if (config.tenantOpts.owners.length) {
+      await page.evaluate(addTenantMembers, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrftoken': await extractCSRFToken(),
+        },
+        data: {
+          owners: config.tenantOpts.owners,
+          // Supported roles:
+          // ['owners', 'editor-users', 'viewer-config', 'viewer-users']
+          roles: config.tenantOpts.roles,
+        },
+      })
+    }
+
+    if (config.tenantOpts.membersToRemove.length) {
+      await page.evaluate(removeTenantMembers, {
+        headers: {
+          'x-csrftoken': await extractCSRFToken(),
+        },
+        membersToRemove: config.tenantOpts.membersToRemove,
+      })
+    }
   }
 
   await browser.close()

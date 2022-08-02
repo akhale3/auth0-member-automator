@@ -7,8 +7,8 @@ module.exports = {
   tenantOpts: {
     baseUrl: 'https://manage.auth0.com/dashboard',
     suffixPath: '/tenant/admins',
-    landingPagePath: '/us/benchsci',
     owners: (process.env.OWNERS || '').split(','),
     roles: (process.env.ROLES || '').split(','),
+    membersToRemove: (process.env.MEMBERS_TO_REMOVE || '').split(','),
   },
 }
